@@ -10,9 +10,9 @@ class Board extends Component {
 
   render() {
     let rows = [];
-    for (var i=0; i<this.state.size; i++) {
+    for (var i=0; i<this.state.height; i++) {
       let row = [];
-      for (var j=0;j<this.state.size; j++) {
+      for (var j=0;j<this.state.width; j++) {
         let isPlayer = this.state.playerPosition[0] === i && this.state.playerPosition[1] === j;
 
         let isEnemy = false;
@@ -41,26 +41,33 @@ class Board extends Component {
   }
 
   componentDidMount() {
-    let size = 0;
-    while(size < 3 || isNaN(size)) {
-      size = prompt("Please enter size of board, minimum 3");
+    let width = 0;
+    let height = 0;
+    while(width < 3 || isNaN(width)) {
+      width = prompt("Please enter width of board, minimum 3");
     }
 
-    size = Math.min(size, 10);
+    while(height < 3 || isNaN(height)) {
+      height = prompt("Please enter height of board, minimum 3");
+    }
+
+    width = Math.min(width, 10);
+    height = Math.min(height, 10);
 
     var boardState = [];
-    for (var i=0; i<size; i++) {
+
+    for (var i=0; i<height; i++) {
       boardState[i] = [];
-      for (var j=0; j<size; j++) {
+      for (var j=0; j<width; j++) {
         boardState[i][j] = 0;
       }
     }
-    let xPlayer = Math.floor((Math.random() * size - 1) + 1);
-    let yPlayer = Math.floor((Math.random() * size - 1) + 1);
+    let xPlayer = Math.floor((Math.random() * height - 1) + 1);
+    let yPlayer = Math.floor((Math.random() * width - 1) + 1);
 
     for (i=0; i<5; i++) {
-      let xEnemy = Math.floor((Math.random() * size - 1) + 1);
-      let yEnemy = Math.floor((Math.random() * size - 1) + 1);
+      let xEnemy = Math.floor((Math.random() * height - 1) + 1);
+      let yEnemy = Math.floor((Math.random() * width - 1) + 1);
 
       if (xEnemy === xPlayer) {
         xEnemy--;
@@ -73,7 +80,8 @@ class Board extends Component {
 
     console.log("Test");
     this.setState((old, props) => ({
-      size: size,
+      height: height,
+      width: width,
       moves: 0,
       playerPosition: [xPlayer, yPlayer],
       boardState: boardState,
@@ -93,7 +101,7 @@ class Board extends Component {
 
   moveRight() {
     this.setState((old, props) => {
-      let x = Math.min(old.playerPosition[1] + 1, old.size - 1);
+      let x = Math.min(old.playerPosition[1] + 1, old.width - 1);
       return {
         moves: old.moves + 1,
         playerPosition: [old.playerPosition[0], x]
@@ -103,7 +111,7 @@ class Board extends Component {
 
   moveDown() {
     this.setState((old, props) => {
-      let y = Math.min(old.playerPosition[0] + 1, old.size - 1);
+      let y = Math.min(old.playerPosition[0] + 1, old.height - 1);
       return {
         moves: old.moves + 1,
         playerPosition: [y, old.playerPosition[1]]
@@ -122,7 +130,7 @@ class Board extends Component {
   }
 
   componentWillReceiveProps(props) {
-    if (this.state.keyPressed != props.keyPressed) {
+    if (this.state.keyPressed !== props.keyPressed) {
       switch (props.keyPressed) {
         case 'left':
         this.moveLeft();
@@ -152,7 +160,7 @@ class Board extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.key) {      
+    if (this.state.key) {
       this.setState({
         key: ""
       });
